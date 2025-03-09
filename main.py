@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sat Mar  8 23:28:25 2025
+Created on Sat Mar  7 23:28:25 2025
 
 @author: Aman Jaiswar
 """
@@ -312,7 +312,6 @@ def extract_tables(selected_images):
     
     if not extracted_data:
         st.error("No data could be extracted from the selected images.")
-        return
     
     # Create a JSON file with the extracted data
     json_data = json.dumps(extracted_data, indent=2)
