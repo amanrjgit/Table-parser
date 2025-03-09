@@ -288,7 +288,8 @@ def extract_tables(selected_images):
             
             # Process the image and get structured data
             # We don't need an output path as we'll store in memory for display
-            parsed_data = process_table_image(image_path, model, feature_extractor)
+            with st.spinner(f"Processing image {i+1}/{len(selected_images)}..."):
+                parsed_data = process_table_image(image_path, model, feature_extractor)
             
             # Add image source info to the parsed data
             result = {
