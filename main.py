@@ -18,23 +18,23 @@ import time
 from ocr import process_table_image
 from transformers import AutoFeatureExtractor, AutoModelForObjectDetection
 
-@st.cache_resource
-def load_table_detection_model():
-    """
-    Load the pre-trained table detection model (cached to save memory).
-    """
-    CACHE_DIR = "./model_cache"
-    with st.spinner("Downloading table detection model... This may take a minute."):
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        model = AutoModelForObjectDetection.from_pretrained("microsoft/table-transformer-detection", cache_dir=CACHE_DIR)
-        model = model.to(device)
-        feature_extractor = AutoFeatureExtractor.from_pretrained("microsoft/table-transformer-detection", cache_dir=CACHE_DIR)
-    return model, feature_extractor
-
-model, feature_extractor = load_table_detection_model()
-
 def main():
     st.set_page_config(page_title="Table Extractor", layout="wide")
+
+    @st.cache_resource
+    def load_table_detection_model():
+        """
+        Load the pre-trained table detection model (cached to save memory).
+        """
+        CACHE_DIR = "./model_cache"
+        with st.spinner("Downloading table detection model... This may take a minute."):
+            device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+            model = AutoModelForObjectDetection.from_pretrained("microsoft/table-transformer-detection", cache_dir=CACHE_DIR)
+            model = model.to(device)
+            feature_extractor = AutoFeatureExtractor.from_pretrained("microsoft/table-transformer-detection", cache_dir=CACHE_DIR)
+        return model, feature_extractor
+    
+    model, feature_extractor = load_table_detection_model()
     
     # Custom CSS for better styling
     st.markdown("""
