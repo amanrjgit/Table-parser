@@ -12,17 +12,17 @@ from PIL import Image
 from transformers import AutoFeatureExtractor, AutoModelForObjectDetection
 import easyocr
 import cv2
+import streamlit as st
 
+@st.cache_resource
 def load_table_detection_model():
     """
-    Load the pre-trained table detection model.
-
-    Returns:
-    tuple: Model and feature extractor
+    Load the pre-trained table detection model (cached to save memory).
     """
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = AutoModelForObjectDetection.from_pretrained("microsoft/table-transformer-detection")
+    model = model.to(device)
     feature_extractor = AutoFeatureExtractor.from_pretrained("microsoft/table-transformer-detection")
-
     return model, feature_extractor
 
 def preprocess_image(image_path):
