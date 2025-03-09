@@ -122,15 +122,44 @@ def perform_ocr(table_image):
     str: Extracted text from the table
     """
     # Initialize EasyOCR reader
-    reader = easyocr.Reader(['en'], model_storage_directory='./model', gpu=False, download_enabled=False)
+    model_storage_directory = './model' 
+    
+    # Check if the model directory exists
+    if not os.path.exists(model_storage_directory):
+        st.warning(f"Model directory {model_storage_directory} does not exist.")
+        # Provide fallback or create directory
+        os.makedirs(model_storage_directory, exist_ok=True)
+    
+    # Check if the specific model files exist
+    required_files = [
+        'craft_mlt_25k.pth',  # The detection model
+        'english_g2.pth'      # The recognition model for English
+    ]
+    
+    missing_files = []
+    for file in required_files:
+        if not os.path.exists(os.path.join(model_storage_directory, file)):
+            missing_files.append(file)
+    
+    if missing_files:
+        st.warning(f"Missing model files: {', '.join(missing_files)}")
+        st.info("Please make sure these files are in your model directory.")
+    
+    # Initialize reader with custom model storage directory
+    reader = easyocr.Reader(
+        ['en'], 
+        gpu=torch.cuda.is_available(),
+        model_storage_directory=model_storage_directory,
+        download_enabled=False  # Prevent automatic download
+    )
 
     # Perform OCR
     results = reader.readtext(table_image)
 
     # Extract text from results
-    text_lines =  [result[1] for result in results]
+    # text_lines =  [result[1] for result in results]
 
-    return '\n'.join(text_lines)
+    return results
 
 def parse_table_text(ocr_text):
     """
