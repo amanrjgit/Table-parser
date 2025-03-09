@@ -7,6 +7,6 @@ easyocr==1.7.2
 transformers==4.49.0
 timm==1.0.15
 pathlib==1.0.1
-torch==2.1.1+cpu
-torchvision==0.16.1+cpu
+torch
+torchvision
 -f https://download.pytorch.org/whl/cpu
