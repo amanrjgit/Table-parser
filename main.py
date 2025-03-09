@@ -16,6 +16,11 @@ import fitz  # PyMuPDF
 import time
 from ocr import process_table_image
 
+# At the top of your main.py
+import os
+os.environ['STREAMLIT_SERVER_MAX_UPLOAD_SIZE'] = '200'
+os.environ['STREAMLIT_SERVER_TIMEOUT'] = '100'
+
 def main():
     st.set_page_config(page_title="Table Extractor", layout="wide")
     
