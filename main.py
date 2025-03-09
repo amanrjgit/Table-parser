@@ -6,6 +6,7 @@ Created on Sat Mar  8 23:28:25 2025
 """
 
 import streamlit as st
+import torch
 import os
 import json
 import tempfile
@@ -15,11 +16,22 @@ from PIL import Image
 import fitz  # PyMuPDF
 import time
 from ocr import process_table_image
+from transformers import AutoFeatureExtractor, AutoModelForObjectDetection
 
-# At the top of your main.py
-import os
-os.environ['STREAMLIT_SERVER_MAX_UPLOAD_SIZE'] = '200'
-os.environ['STREAMLIT_SERVER_TIMEOUT'] = '100'
+@st.cache_resource
+def load_table_detection_model():
+    """
+    Load the pre-trained table detection model (cached to save memory).
+    """
+    CACHE_DIR = "./model_cache"
+    with st.spinner("Downloading table detection model... This may take a minute."):
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        model = AutoModelForObjectDetection.from_pretrained("microsoft/table-transformer-detection", cache_dir=CACHE_DIR)
+        model = model.to(device)
+        feature_extractor = AutoFeatureExtractor.from_pretrained("microsoft/table-transformer-detection", cache_dir=CACHE_DIR)
+    return model, feature_extractor
+
+model, feature_extractor = load_table_detection_model()
 
 def main():
     st.set_page_config(page_title="Table Extractor", layout="wide")
@@ -255,7 +267,7 @@ def extract_tables(selected_images):
             
             # Process the image and get structured data
             # We don't need an output path as we'll store in memory for display
-            parsed_data = process_table_image(image_path, None)
+            parsed_data = process_table_image(image_path, model, feature_extractor)
             
             # Add image source info to the parsed data
             result = {
