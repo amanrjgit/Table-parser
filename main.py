@@ -35,6 +35,8 @@ def main():
         return model, feature_extractor
     
     model, feature_extractor = load_table_detection_model()
+    st.session_state.model = model
+    st.session_state.feature_extractor = feature_extractor
     
     # Custom CSS for better styling
     st.markdown("""
@@ -247,9 +249,13 @@ def display_image_selection():
     else:
         st.info("Please select at least one image to extract tables.")
 
-def extract_tables(selected_images, model=model, feature_extractor=feature_extractor):
+def extract_tables(selected_images):
     """Extract tables from selected images using OCR."""
     st.subheader("Extracting Tables...")
+
+    # Get model and feature_extractor from session state
+    model = st.session_state.model
+    feature_extractor = st.session_state.feature_extractor
     
     # Progress bar for better UX
     progress_bar = st.progress(0)
