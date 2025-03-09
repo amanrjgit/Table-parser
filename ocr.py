@@ -9,22 +9,9 @@ import torch
 import json
 import numpy as np
 from PIL import Image
-from transformers import AutoFeatureExtractor, AutoModelForObjectDetection
 import easyocr
 import cv2
 import streamlit as st
-
-@st.cache_resource
-def load_table_detection_model():
-    """
-    Load the pre-trained table detection model (cached to save memory).
-    """
-    with st.spinner("Downloading table detection model... This may take a minute."):
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        model = AutoModelForObjectDetection.from_pretrained("microsoft/table-transformer-detection")
-        model = model.to(device)
-        feature_extractor = AutoFeatureExtractor.from_pretrained("microsoft/table-transformer-detection")
-    return model, feature_extractor
 
 def preprocess_image(image_path):
     """
@@ -390,7 +377,7 @@ def process_ocr_to_json_financial(ocr_results, row_threshold=10, column_threshol
     
     return result
 
-def process_table_image(image_path, output_path=None):
+def process_table_image(image_path, model, feature_extractor, output_path=None):
     """
     Main function to process table image and convert to JSON.
 
@@ -402,8 +389,6 @@ def process_table_image(image_path, output_path=None):
     dict: Parsed table data
     """
     try:
-        # Load detection model
-        model, feature_extractor = load_table_detection_model()
 
         # Preprocess image
         image = preprocess_image(image_path)
