@@ -26,17 +26,32 @@ def main():
         """
         Load the pre-trained table detection model (cached to save memory).
         """
-        CACHE_DIR = "./model_cache"
-        with st.spinner("Downloading table detection model... This may take a minute."):
-            device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-            model = AutoModelForObjectDetection.from_pretrained("microsoft/table-transformer-detection", cache_dir=CACHE_DIR)
-            model = model.to(device)
-            feature_extractor = AutoFeatureExtractor.from_pretrained("microsoft/table-transformer-detection", cache_dir=CACHE_DIR)
-        return model, feature_extractor
+        try:
+            CACHE_DIR = "./model_cache"
+            with st.spinner("Downloading table detection model... This may take a minute."):
+                device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+                st.write(f"Using device: {device}")
+                model = AutoModelForObjectDetection.from_pretrained("microsoft/table-transformer-detection", cache_dir=CACHE_DIR)
+                st.write("Model loaded successfully")
+                model = model.to(device)
+                st.write("Model moved to device")
+                feature_extractor = AutoFeatureExtractor.from_pretrained("microsoft/table-transformer-detection", cache_dir=CACHE_DIR)
+                st.write("Feature extractor loaded successfully")
+            return model, feature_extractor
+        except Exception as e:
+            st.error(f"Error loading model: {str(e)}")
+            import traceback
+            st.code(traceback.format_exc())
     
-    model, feature_extractor = load_table_detection_model()
-    st.session_state.model = model
-    st.session_state.feature_extractor = feature_extractor
+    try:
+        st.write("About to load model...")
+        model, feature_extractor = load_table_detection_model()
+        # Store in session state
+        st.session_state.model = model
+        st.session_state.feature_extractor = feature_extractor
+        st.write("Model loaded successfully and stored in session state")
+    except Exception as e:
+        st.error(f"Failed to load model: {str(e)}")
     
     # Custom CSS for better styling
     st.markdown("""
