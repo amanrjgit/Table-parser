@@ -3,7 +3,7 @@ pillow==10.1.0
 numpy==1.26.2
 PyMuPDF==1.23.8
 opencv-python==4.8.1.78
-easyocr==1.7.1
+easyocr==1.7.2
 torch==2.5.0
 torchvision==0.20.0  
 transformers==4.49.0
