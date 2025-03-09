@@ -19,10 +19,11 @@ def load_table_detection_model():
     """
     Load the pre-trained table detection model (cached to save memory).
     """
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = AutoModelForObjectDetection.from_pretrained("microsoft/table-transformer-detection")
-    model = model.to(device)
-    feature_extractor = AutoFeatureExtractor.from_pretrained("microsoft/table-transformer-detection")
+    with st.spinner("Downloading table detection model... This may take a minute."):
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        model = AutoModelForObjectDetection.from_pretrained("microsoft/table-transformer-detection")
+        model = model.to(device)
+        feature_extractor = AutoFeatureExtractor.from_pretrained("microsoft/table-transformer-detection")
     return model, feature_extractor
 
 def preprocess_image(image_path):
