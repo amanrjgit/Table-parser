@@ -247,7 +247,7 @@ def display_image_selection():
     else:
         st.info("Please select at least one image to extract tables.")
 
-def extract_tables(selected_images):
+def extract_tables(selected_images, model=model, feature_extractor=feature_extractor):
     """Extract tables from selected images using OCR."""
     st.subheader("Extracting Tables...")
     
