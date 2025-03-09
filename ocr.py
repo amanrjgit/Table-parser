@@ -122,7 +122,7 @@ def perform_ocr(table_image):
     str: Extracted text from the table
     """
     # Initialize EasyOCR reader
-    reader = easyocr.Reader(['en'])
+    reader = easyocr.Reader(['en'], gpu=False)
 
     # Perform OCR
     results = reader.readtext(table_image)
